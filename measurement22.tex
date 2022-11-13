@@ -59,76 +59,20 @@ The abstract should briefly summarize the contents of the paper in
 %
 %
 \section{First Section}
-\subsection{A Subsection Sample}
-Please note that the first paragraph of a section or subsection is
-not indented. The first paragraph that follows a table, figure,
-equation etc. does not need an indent, either.
 
-Subsequent paragraphs, however, are indented.
+Use fuzzing, compilation and static analysis techniques to guide generation of run-time measurement and appraisal routines.
 
-\subsubsection{Sample Heading (Third Level)} Only two levels of
-headings should be numbered. Lower level headings remain unnumbered;
-they are formatted as run-in headings.
+The University of Kansas has developed mechanisms for executing and appraising measurement and meta-measurement in support of trust.  Arizona State University has developed mechanisms for fuzzing and static analysis of the Linux heap and user space programs.  We propose using the results of fuzzing and static analysis to identify memory regions whose measurements will be particularly informative.
 
-\paragraph{Sample Heading (Fourth Level)}
-The contribution should contain no more than four levels of
-headings. Table~\ref{tab1} gives a summary of all heading levels.
+Fuzzing to generate and identify "weird" memory states.  Develop measurements to detect these memory states.  Because we understand how fuzzing is performed we understand what measurements tell us about observed memory.
 
-\begin{table}
-\caption{Table captions should be placed above the
-tables.}\label{tab1}
-\begin{tabular}{|l|l|l|}
-\hline
-Heading level &  Example & Font size and style\\
-\hline
-Title (centered) &  {\Large\bfseries Lecture Notes} & 14 point, bold\\
-1st-level heading &  {\large\bfseries 1 Introduction} & 12 point, bold\\
-2nd-level heading & {\bfseries 2.1 Printing Area} & 10 point, bold\\
-3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold\\
-4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic\\
-\hline
-\end{tabular}
-\end{table}
+Program decompilation to identify critical system variables for runtime measurement.  Decompilation produces source with variables present.  Perform source-level analysis to determine what variables are valuable for runtime measurement.  Synthesize measurers and appraisal routines for variable memory locations.  (Use type information to bound memory values?)
 
+Use static analysis and compilation techniques to automatically generate measurement and appraisal routines from OS and user-space software.
+Identify cases where dynamic allocators are not robust to other bugs. Lookat the heap using bounded model checking.  Look for pacial memory errors on the heap that could identify measurement targets.
 
-\noindent Displayed equations are centered and set on a separate
-line.
-\begin{equation}
-x + y = z
-\end{equation}
-% Please try to avoid rasterized images for line-art diagrams and
-% schemas. Whenever possible, use vector graphics instead (see
-% Fig.~\ref{fig1}).
+Compile in runtime instrumentation to enhance measurement.  "Handles" for memory locations, markers for locations and events, runtime monitors like trip-wires.  Open research problem.
 
-% \begin{figure}
-% \includegraphics[width=\textwidth]{fig1.eps}
-% \caption{A figure caption is always placed below the illustration.
-% Please note that short captions are centered, while long ones are
-% justified by the macro package automatically.} \label{fig1}
-% \end{figure}
-
-\begin{theorem}
-This is a sample theorem. The run-in heading is set in bold, while
-the following text appears in italics. Definitions, lemmas,
-propositions, and corollaries are styled the same way.
-\end{theorem}
-%
-% the environments 'definition', 'lemma', 'proposition', 'corollary',
-% 'remark', and 'example' are defined in the LLNCS documentclass as well.
-%
-\begin{proof}
-Proofs, examples, and remarks have the initial word in italics,
-while the following text appears in normal font.
-\end{proof}
-
-We can use \verb+citep+ for authors names like~\citep{Petz:2019aa} or
-\verb+citet+ for the traditional numerical
-citation~\citet{Ramsdell:2019aa}.
-
-When submitting papers that must conform to LNCS standards just use
-\verb+cite+ for citations like~\cite{Petz:2019aa} and comment out the
-\verb+natbib+ include above and swap \verb+bibliographystyle+ commands
-below.
 % 
 % 
 % ---- Bibliography ----
