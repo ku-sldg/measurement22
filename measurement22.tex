@@ -7,8 +7,8 @@
 \usepackage{graphicx}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
-%\usepackage{tikz}
-%\usetikzlibrary{arrows}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
 \usepackage{verbatim}
 %\usepackage{amsmath}
 %\usepackage{amssymb}
@@ -53,25 +53,126 @@
 The abstract should briefly summarize the contents of the paper in
 15--250 words.
 
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+\keywords{Remote Attestation \and Static Analysis \and Runtime Measurement.}
 \end{abstract}
 %
 %
 %
-\section{First Section}
 
-Use fuzzing, compilation and static analysis techniques to guide generation of run-time measurement and appraisal routines.
+%%\section{Introduction}
 
-The University of Kansas has developed mechanisms for executing and appraising measurement and meta-measurement in support of trust.  Arizona State University has developed mechanisms for fuzzing and static analysis of the Linux heap and user space programs.  We propose using the results of fuzzing and static analysis to identify memory regions whose measurements will be particularly informative.
+Establishing trust in a networked peer is a difficult problem. \citet{Martin:08:The-ten-page-in} state trust may be exhibited through unambiguous identification, unhindered operation, and direct observation of good behavior or indirect observation by a trusted third party. One possible technique allowing a communicating peer to establish trust in a target system's execution is semantic remote attestation~\citep{Haldar:04:Semantic-Remote}. Shown in Figure~\ref{fig:remote-attestation} a \emph{relying party} ($RP$) or \emph{appraiser} ($A$) sends an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where attestation generates and returns evidence
+and meta-evidence ($e:(E,n)$) that can be appraised to determine
+trust. 
 
-Fuzzing to generate and identify "weird" memory states.  Develop measurements to detect these memory states.  Because we understand how fuzzing is performed we understand what measurements tell us about observed memory.
+% In some attestation scenarios, the appraiser and relying party are interchangeable while other times the target is responsible for the appraisal and bundling of evidence. 
 
-Program decompilation to identify critical system variables for runtime measurement.  Decompilation produces source with variables present.  Perform source-level analysis to determine what variables are valuable for runtime measurement.  Synthesize measurers and appraisal routines for variable memory locations.  (Use type information to bound memory values?)
+\begin{figure}[hbtp]
+  \centering
+  \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.0cm,
+    thick,main node/.style={rectangle,fill=blue!20,draw,
+      font=\sffamily,minimum height=20mm,minimum width=10mm},
+    io node/.style={rectangle,
+      font=\sffamily,minimum height=5mm,minimum width=10mm}]
+    
+    \node[main node] (NM) {$RP$};
+    \node[main node] (NME) [node distance=5.0cm, right of=NM] {$T$};
+%%    \node[io node] (IN) [above of=NM] {$R$};
+%%    \node[io node] (OUT) [below of=NM] {$\mathtt{Prop}$};
+    
+    \path[every node/.style={font=\sffamily\small, fill=white,inner sep=1pt}]
+    (NM) edge [bend left=30] node[above=1mm] {$\{(R,n,a)\}_{A^{-1}}$} (NME)
+    (NME) edge [bend left=30] node[below=1mm] {$\{(E,n)\}_{T^{-1}}$} (NM)
+  %  (IN) edge (NM)
+  %  (NM) edge (OUT)
+    ;
+  \end{tikzpicture}
+  \caption{Remote attestation architecture
+  showing a \emph{relying party} making an attestation request of a
+  \emph{target}.}
+  \label{fig:remote-attestation}
+\end{figure}
 
-Use static analysis and compilation techniques to automatically generate measurement and appraisal routines from OS and user-space software.
-Identify cases where dynamic allocators are not robust to other bugs. Lookat the heap using bounded model checking.  Look for pacial memory errors on the heap that could identify measurement targets.
+\citet{Coker::Principles-of-R,Coker:08:Attestation:-Ev} define a
+remote attestation model where a target executes an \emph{attestation
+  protocol} that gathers evidence and generates meta-evidence.  The
+protocol sequences the execution of attestation services that perform
+measurement, generate cryptographic signatures, and make requests of
+other systems.  These protocols are executed by one or many \emph{attestation
+  manager(s)} associated with the relying party and target.
 
-Compile in runtime instrumentation to enhance measurement.  "Handles" for memory locations, markers for locations and events, runtime monitors like trip-wires.  Open research problem.
+Working with MITRE, JHUAPL, and NSA The University of Kansas has
+developed Copland~\citep{Ramsdell:2019aa} attestation protocol language
+and the MAESTRO framework~\citep{petz2022innovations} for implementing
+remote attestation systems. Copland is a formally specified language
+that sequences the execution of attestation services providers (ASPs)
+to gather measurement information, cryptographic operations to
+generate meta-evidence, and requests to remote attestation managers
+for evidence. Using the Copland formal semantics, verified Coq
+definitions of attestation, and synthesis of Coq to
+CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a formally
+verified, layered attestation capability that guarantees all ASPs are
+executed in the right order at the right place including cryptographic
+evidence to ensure integrity.
+
+If we understand how to observe an application at runtime, we can
+design Copland protocols and ASPs to gather evidence.  This is
+evidenced by the LKIM~\cite{Loscocco:07:Linux-kernel-in} contextual
+measurement system designed for gathering evidence and appraising
+Linux.  LKIM takes advantage of a common, consistent Linux memory
+layout to sample memory locations associated with critical data
+structures.  These samples are assembled as evidence that is appraised
+to establish whether the kernel appears as it should.
+
+MAESTRO's widespread adoption is limited by difficulty understanding
+how to observe arbitrary programs.  With the operating system is
+critical, user space and other privileged programs may be compromised
+by an attack or misconfiguration.  Understanding ``where to look'' at
+such programs is frequently infeasible due to lack of source
+code and program complexity.  For MAESTRO and other attestation
+systems to succeed, the process of defining measurements and
+measurement targets must be automated.
+
+Working with XXX researchers at Arizona state have developed
+techniques for fuzzing and static analysis of the Linux heap and user
+space programs.  These techniques prove useful for automatically
+discovering critical data structures useful for attack and defense.
+
+We propose a spectrum of techniques to automatically discover and
+implement high-quality measurement.  When source code is available use
+static analysis to identify memory regions whose measurements will be
+particularly informative.  When source is not available use fuzzing to
+identify unusual states. and decompilation techniques to find system
+variables whose values prove useful for appraisal.  Finally, we
+propose generating ASPs and instrumenting code during compilation to
+provide measurement access to critical structures.
+
+We will use Fuzzing to generate and identify ``weird'' memory states.
+Once such states are identified, develop measurement and appraisal
+routines to detect these memory states.  Because we understand how
+fuzzing is performed we understand what measurements tell us about
+observed memory.
+
+Program decompilation identifies critical system variables for runtime
+measurement.  Decompilation produces source with variables present.
+Once decompiled, perform source-level analysis to determine what
+variables are valuable for runtime measurement.  Using type
+information we can bound memory values identifying good and bad
+variable values.  Using these information we can automatically
+synthesize measurers and appraisal routines for variable memory
+locations.
+
+Use static analysis and compilation techniques to automatically
+generate measurement and appraisal routines from OS and user-space
+software. Identify cases where dynamic allocators are not robust to
+other bugs. Lookat the heap using bounded model checking.  Look for
+pacial memory errors on the heap that could identify measurement
+targets.
+
+Compile in runtime instrumentation to enhance measurement.  "Handles"
+for memory locations, markers for locations and events, runtime
+monitors like trip-wires.  Open research problem.
+
 
 % 
 % 
@@ -82,7 +183,7 @@ Compile in runtime instrumentation to enhance measurement.  "Handles" for memory
 %
 %\bibliographystyle{splncs04}
 \bibliographystyle{splncsnat}
-%\bibliography{sldg}
-\bibliography{bib/sldg}
+\bibliography{sldg}
+%\bibliography{bib/sldg}
 %
 \end{document}
