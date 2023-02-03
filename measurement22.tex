@@ -101,8 +101,8 @@ measurement, generate cryptographic signatures, and make requests of
 other systems.  These protocols are executed by one or many \emph{attestation
   manager(s)} associated with the relying party and target.
 
-Working with MITRE, JHUAPL, and NSA The University of Kansas has
-developed Copland~\citep{Ramsdell:2019aa} attestation protocol language
+Working with MITRE, JHUAPL, and NSA, the University of Kansas has
+developed the Copland~\citep{Ramsdell:2019aa} attestation protocol language
 and the MAESTRO framework~\citep{petz2022innovations} for implementing
 remote attestation systems. Copland is a formally specified language
 that sequences the execution of attestation services providers (ASPs)
@@ -125,53 +125,44 @@ structures.  These samples are assembled as evidence that is appraised
 to establish whether the kernel appears as it should.
 
 MAESTRO's widespread adoption is limited by difficulty understanding
-how to observe arbitrary programs.  With the operating system is
-critical, user space and other privileged programs may be compromised
+how to observe \emph{arbitrary} programs.  While the operating system is
+critical, user space and other privileged programs may also be compromised
 by an attack or misconfiguration.  Understanding ``where to look'' at
 such programs is frequently infeasible due to lack of source
 code and program complexity.  For MAESTRO and other attestation
 systems to succeed, the process of defining measurements and
 measurement targets must be automated.
 
-Working with XXX researchers at Arizona state have developed
-techniques for fuzzing and static analysis of the Linux heap and user
-space programs.  These techniques prove useful for automatically
-discovering critical data structures useful for attack and defense.
+Arizona State University has developed
+techniques to fuzz~\cite{trickel2022toss,salls2020exploring,peng2018t}, symbolically execute~\cite{stephens2016driller,shoshitaishvili2016sok}, and statically analyze~\cite{das2022hybrid,vadayath2022arbiter} complex user space programs and their components, including complex subsystems such as the dynamic allocator (``heap'')~\cite{eckert2018heaphopper} and cross-runtime interface bindings~\cite{dinh2021favocado}.
+These techniques prove useful for automatically discovering critical data structures useful for attack and defense.
 
 We propose a spectrum of techniques to automatically discover and
-implement high-quality measurement.  When source code is available use
-static analysis to identify memory regions whose measurements will be
-particularly informative.  When source is not available use fuzzing to
-identify unusual states. and decompilation techniques to find system
-variables whose values prove useful for appraisal.  Finally, we
-propose generating ASPs and instrumenting code during compilation to
-provide measurement access to critical structures.
+implement high-quality measurement for use in downstream attestation.
+When source code is available (increasing the efficacy of static analysis by granting it accurate variable type information), we will use static analysis to identify memory regions whose measurements will be particularly informative.
+When source (and variable type information) is not available, we will leverage our decompilation techniques to find system variables whose values prove useful for appraisal, and leverage fuzzing to identify unusual states.
+Finally, we propose generating ASPs and instrumenting code during compilation (when source is available) or retrofitting it into the already-compiled binary using our binary modification techniques~\cite{wang2017ramblr} (when source is not available) to provide measurement access to critical structures.
 
 We will use Fuzzing to generate and identify ``weird'' memory states.
-Once such states are identified, develop measurement and appraisal
-routines to detect these memory states.  Because we understand how
-fuzzing is performed we understand what measurements tell us about
-observed memory.
+Once such states are identified, by analyzing the constraints that must be satisfied to trigger them, we will develop measurement and appraisal routines to detect these memory states.
+Because we understand how fuzzing is performed, and can leverage symbolic execution to delve deeper into the functionality of the program, we can understand what measurements tell us about observed memory.
 
-Program decompilation identifies critical system variables for runtime
-measurement.  Decompilation produces source with variables present.
-Once decompiled, perform source-level analysis to determine what
-variables are valuable for runtime measurement.  Using type
-information we can bound memory values identifying good and bad
-variable values.  Using these information we can automatically
-synthesize measurers and appraisal routines for variable memory
-locations.
+Program decompilation identifies critical system variables for runtime measurement.
+Decompilation produces source with variables present.
+Once decompiled, we will perform source-level analysis to determine what variables are valuable for runtime measurement.
+Using type information, we can bound memory values and identify good and bad variable values.
+Using this information, we can automatically synthesize measurement and appraisal routines for variable memory locations.
 
-Use static analysis and compilation techniques to automatically
-generate measurement and appraisal routines from OS and user-space
-software. Identify cases where dynamic allocators are not robust to
-other bugs. Lookat the heap using bounded model checking.  Look for
-pacial memory errors on the heap that could identify measurement
-targets.
+We plan to use static analysis and compilation techniques to automatically generate measurement and appraisal routines from OS and user-space software.
+For example, we can utilize our dynamic allocator analysis results~\cite{eckert2018heaphopper} to synthesize measurement routines for allocator implementation to detect integrity violations due to other bugs in the program.
+We can carry out similar intervention at the boundary between different program components by leveraging interface specifications combined with advanced analysis~\cite{dinh2021favocado}.
 
-Compile in runtime instrumentation to enhance measurement.  "Handles"
-for memory locations, markers for locations and events, runtime
-monitors like trip-wires.  Open research problem.
+We must take care to limit the performance impact of measurement instrumentation.
+In other words, the measurement should be triggered as rarely as possible during runtime while still providing detection guarantees.
+This problem is an interesting mirror to false positive reduction during static analysis.
+By leveraging our system of \emph{Iterative False Positive Reduction} using a combination of Abstract Interpretation and Dynamic Symbolic Execution~\cite{vadayath2022arbiter}, we can narrow down to increasingly reduced instrumentation sites (by disproving the need for instrumentation at given points in the program), reducing runtime overhead by trading it for analysis-time cost.
+Even in cases where we cannot disprove the need for instrumentation, we may be able to ``back-propagate'' certain constraints that, if satisfied, disprove the need for further measurement at runtime.
+By carefully crafting such runtime instrumentation and correlating it to marked memory locations and events, we can essentially synthesize ``tripwires' that, when not tripped, cause very little overhead.
 
 
 % 
