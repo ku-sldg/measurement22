@@ -27,7 +27,7 @@
 
 \begin{document}
 %
-\title{Automated Measurement Targets Discovery}
+\title{Understanding Program State Through Attestation}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
@@ -50,18 +50,20 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-  Designing protocols for runtime remote attestation systems requires
-  identifying observation points in program state for measurement.
-  Finding such observation points is complicated by state complexity,
-  unavailability of source code, and difficulty mapping state to
-  behavior.  Static and dynamic analysis techniques including fuzzing,
-  abstract interpretation, and decompilation prove effective in
-  approximating system state for testing and debugging.  We propose
-  repurposing such techniques to discover measurements of user-space
-  programs that describe runtime behavior and integrating those
-  measurements into attestation protocols.
-  
-  \keywords{Remote Attestation \and Static Analysis \and Runtime Measurement.}
+Runtime remove attestation is understanding program state under constrained
+disclosure. A relying party observes and appraises the behavior of a
+remote target by executing an attestation protocol. The protocol and the remote
+target constrain what can be observed by the relying party.  Designing
+attestation protocols requires identifying measurement points in program state
+that provide meaningful approximations  while respecting constrained disclosure.
+Finding such observation points is complicated by state complexity, difficulty
+mapping execution state to behavior, and unavailability of source code.  Static
+and dynamic analysis techniques including fuzzing, abstract
+interpretation, and decompilation prove effective in approximating system state
+for testing and debugging.  We propose repurposing such techniques to discover
+measurements of user-space programs that soundly approximate runtime behavior.
+
+\keywords{remote attestation \and static analysis \and runtime measurement \and program understanding.}
 \end{abstract}
 %
 %
@@ -69,17 +71,15 @@
 
 %%\section{Introduction}
 
-Establishing trust in a remote peer is a challenging
-problem. \citet{Martin:08:The-ten-page-in} defined trust as exhibiting
-unambiguous identification, unhindered operation, and direct
-observation of good behavior or indirect observation by a trusted
-third party. One technique for establishing
-trust in a target system's execution is semantic remote
-attestation~\citep{Haldar:04:Semantic-Remote,Coker::Principles-of-R}. Shown
-in Figure~\ref{fig:remote-attestation} a \emph{relying party} ($RP$)
-sends an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$)
-where attestation generates and returns evidence and meta-evidence
-($e:(E,n)$) that can then be \emph{appraised} to determine trust.
+Establishing trust in a remote peer is a challenging problem that requires
+approximating program behavior. \citet{Martin:08:The-ten-page-in} defines trust
+as exhibiting unambiguous identification, unhindered operation, and direct
+observation of good behavior or indirect observation by a trusted third party.
+One technique for establishing trust in a target system's execution is semantic
+remote attestation~\citep{Haldar:04:Semantic-Remote,Coker::Principles-of-R}.
+Shown in Figure~\ref{fig:remote-attestation} a \emph{relying party} ($RP$) sends
+an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where attestation
+generates and returns evidence and meta-evidence ($e:(E,n)$) that can then be \emph{appraised} to determine trust.
 
 \begin{figure}[hbtp]
   \centering
@@ -107,45 +107,42 @@ where attestation generates and returns evidence and meta-evidence
   \label{fig:remote-attestation}
 \end{figure}
 
-\citet{Coker::Principles-of-R,Coker:08:Attestation:-Ev} define a
-remote attestation model where a target executes an \emph{attestation
-  protocol} that gathers evidence and generates meta-evidence.  The
-protocol sequences attestation service execution including
-measurement, generate cryptographic signatures, and make requests of
-other systems.  These protocols are executed by one or many
-\emph{attestation manager(s)} associated with the relying party and
-target.
+\citet{Coker::Principles-of-R,Coker:08:Attestation:-Ev} define a remote
+attestation model where a target executes an \emph{attestation protocol} that
+gathers evidence and generates meta-evidence of its execution. The protocol
+sequences attestation service execution including measurement, signing, and
+making attestation requests of other systems.  These protocols are executed by
+one or many \emph{attestation manager(s)} associated with the relying party and target.
 
-Working with MITRE, JHUAPL, and NSA, the University of Kansas has
-developed the Copland~\citep{Ramsdell:2019aa} attestation protocol
-language and the MAESTRO framework~\citep{petz2022innovations} for
-implementing remote attestation systems. Copland is a formally
-specified language that sequences the execution of attestation
-services providers (ASPs) to gather measurement information,
-cryptographic operations to generate meta-evidence, and requests to
-remote attestation managers for evidence. Using the Copland formal
-semantics, verified Coq definitions of attestation, and synthesis of
-Coq to CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a
-formally verified, layered attestation capability guaranteeing that
-all ASPs are executed in the right order at the right place.
+Working with MITRE, JHUAPL, and NSA, the University of Kansas has developed the
+Copland~\citep{Ramsdell:2019aa} attestation protocol language and the MAESTRO
+framework~\citep{petz2022innovations,
+Petz:2024:Verified-Configuration-and-Deployment-Paper}
+for synthesizing remote attestation systems. Copland is a formally specified
+language that sequences the execution of attestation services providers (ASPs)
+to gather measurement information, cryptographic operations to generate
+meta-evidence, and requests to remote attestation managers for evidence. Using
+the Copland formal semantics, verified Coq definitions of attestation, and
+synthesis of Coq to CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a
+formally verified, layered attestation capability guaranteeing that all ASPs are
+executed in the right order at the right place.
+ 
+If we understand how an application executes, we can design Copland
+protocols and ASPs to gather evidence with a verfied MAESTRO environment.  The
+key is understanding and gathering evidence of ``good'' This is evidenced by the
+LKIM~\citep{Loscocco:07:Linux-kernel-in} contextual measurement system designed
+for gathering evidence and appraising Linux.  LKIM takes advantage of a common,
+consistent Linux memory layout to sample memory locations associated with
+critical data structures.  These samples are assembled as evidence that is
+appraised to establish whether the kernel satisfies policy.
 
-If we understand how to observe an application at runtime, we can
-design Copland protocols and ASPs to gather evidence.  This is
-evidenced by the LKIM~\citep{Loscocco:07:Linux-kernel-in} contextual
-measurement system designed for gathering evidence and appraising
-Linux.  LKIM takes advantage of a common, consistent Linux memory
-layout to sample memory locations associated with critical data
-structures.  These samples are assembled as evidence that is appraised
-to establish whether the kernel satisfies policy.
-
-MAESTRO's widespread adoption is limited by difficulty understanding
-how to observe \emph{arbitrary} programs.  While the operating system
-is critical, user space and other privileged programs may also be
-compromised by an attack or misconfiguration.  Understanding ``how to
-look'' at such programs is frequently infeasible due to lack of source
-code and program complexity.  For MAESTRO and other attestation
-systems to succeed, the process of defining measurements, measurement
-targets, and attestation protocols must be automated.
+MAESTRO's widespread adoption is limited by difficulty understanding how to
+observe \emph{arbitrary} programs.  While the operating system is critical, user
+space and other privileged programs may also be compromised by an attack or
+misconfiguration.  Understanding ``how to look'' at such programs is frequently
+infeasible due to lack of source code and program complexity.  For MAESTRO and
+other attestation systems to succeed, the process of defining measurements,
+measurement targets, and attestation protocols must be automated.
 
 Arizona State University has developed
 techniques to fuzz~\citep{trickel2022toss,salls2020exploring,peng2018t}, symbolically execute~\citep{stephens2016driller,shoshitaishvili2016sok}, and statically analyze~\citep{das2022hybrid,vadayath2022arbiter} complex user space programs and their components, including complex subsystems such as the dynamic allocator (``heap'')~\citep{eckert2018heaphopper} and cross-runtime interface bindings~\citep{dinh2021favocado}.
@@ -188,7 +185,6 @@ By carefully crafting such runtime instrumentation and correlating it to marked 
 %
 %\bibliographystyle{splncs04}
 \bibliographystyle{splncsnat}
-\bibliography{sldg}
-%\bibliography{bib/sldg}
+\bibliography{bib/sldg}
 %
 \end{document}

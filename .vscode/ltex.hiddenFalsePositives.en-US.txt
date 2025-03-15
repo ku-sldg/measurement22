@@ -1,0 +1,4 @@
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qremote attestation static analysis runtime measurement program understanding.\\E$"}
+{"rule":"RELY_ON","sentence":"^\\QA relying party observes and appraises the behavior of a remote target by executing an attestation protocol.\\E$"}
+{"rule":"RELY_ON","sentence":"^\\QThe protocol and the remote target constrain what can be observed by the relying party.\\E$"}
+{"rule":"RELY_ON","sentence":"^\\QThese protocols are executed by one or many attestation manager(s) associated with the relying party and target.\\E$"}
