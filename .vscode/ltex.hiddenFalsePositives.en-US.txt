@@ -2,3 +2,7 @@
 {"rule":"RELY_ON","sentence":"^\\QA relying party observes and appraises the behavior of a remote target by executing an attestation protocol.\\E$"}
 {"rule":"RELY_ON","sentence":"^\\QThe protocol and the remote target constrain what can be observed by the relying party.\\E$"}
 {"rule":"RELY_ON","sentence":"^\\QThese protocols are executed by one or many attestation manager(s) associated with the relying party and target.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QUnderstanding Program State Through Attestation Yan Shoshitaishvili1 Perry Alexander2 Y. Shoshitaishvili and P. Alexander Arizona State University Tempe, AZ \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Institute for Information Sciences The University of Kansas Lawrence, KS 66045 \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Runtime remove attestation is understanding program state under constrained disclosure.\\E$"}
+{"rule":"RELY_ON","sentence":"^\\QShown in Figure \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q a relying party (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) sends an attestation request (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) to a target (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) where attestation generates and returns evidence and meta-evidence (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) that can then be appraised to determine trust.\\E$"}
+{"rule":"RELY_ON","sentence":"^\\QRemote attestation architecture showing a relying party making an attestation request of a target.\\E$"}
+{"rule":"DID_FOUND_AMBIGUOUS","sentence":"^\\QUsing type information, we can bound memory values and identify good and bad variable values.\\E$"}

@@ -95,7 +95,7 @@ generates and returns evidence and meta-evidence ($e:(E,n)$) that can then be \e
 %%    \node[io node] (OUT) [below of=NM] {$\mathtt{Prop}$};
     
     \path[every node/.style={font=\sffamily\small, fill=white,inner sep=1pt}]
-    (NM) edge [bend left=30] node[above=1mm] {$\{(R,n,a)\}_{A^{-1}}$} (NME)
+    (NM) edge [bend left=30] node[above=1mm] {$\{(R,n,a)\}_{RP^{-1}}$} (NME)
     (NME) edge [bend left=30] node[below=1mm] {$\{(E,n)\}_{T^{-1}}$} (NM)
   %  (IN) edge (NM)
   %  (NM) edge (OUT)
@@ -138,7 +138,7 @@ defines the performance envelop.  Copland and MAESTRO perform similarly on
 arbitrarily large systems.
 
 Difficulty understanding software limits adoption of MAESTRO specifically and
-attestation generally.  While LKIM appraisal of operating system is critical
+attestation generally.  While LKIM appraisal of operating system is critical,
 other software components may be compromised by an attack or
 misconfiguration.  Manually understanding those components for developing
 attestation systems is often infeasible due to lack of source code, program
@@ -176,8 +176,6 @@ This problem is an interesting mirror to false positive reduction during static 
 By leveraging our system of \emph{Iterative False Positive Reduction} using a combination of Abstract Interpretation and Dynamic Symbolic Execution~\citep{vadayath2022arbiter}, we can narrow down to increasingly reduced instrumentation sites (by disproving the need for instrumentation at given points in the program), reducing runtime overhead by trading it for analysis-time cost.
 Even in cases where we cannot disprove the need for instrumentation, we may be able to ``back-propagate'' certain constraints that, if satisfied, disprove the need for further measurement at runtime.
 By carefully crafting such runtime instrumentation and correlating it to marked memory locations and events, we can essentially synthesize ``tripwires' that, when not tripped, cause very little overhead.
-
-
 % 
 % 
 % ---- Bibliography ----
@@ -187,6 +185,6 @@ By carefully crafting such runtime instrumentation and correlating it to marked 
 %
 %\bibliographystyle{splncs04}
 \bibliographystyle{splncsnat}
-\bibliography{bib/sldg}
+\bibliography{sldg}
 %
 \end{document}
