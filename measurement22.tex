@@ -127,22 +127,24 @@ synthesis of Coq to CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a
 formally verified, layered attestation capability guaranteeing that all ASPs are
 executed in the right order at the right place.
  
-If we understand how an application executes, we can design Copland
-protocols and ASPs to gather evidence with a verfied MAESTRO environment.  The
-key is understanding and gathering evidence of ``good'' This is evidenced by the
-LKIM~\citep{Loscocco:07:Linux-kernel-in} contextual measurement system designed
-for gathering evidence and appraising Linux.  LKIM takes advantage of a common,
-consistent Linux memory layout to sample memory locations associated with
-critical data structures.  These samples are assembled as evidence that is
-appraised to establish whether the kernel satisfies policy.
+If we have a performance envelope defining good execution, we can design Copland
+protocols and ASPs to gather and appraise evidence to determine if execution is
+in that envelop.  A concrete example of this is the
+LKIM~\citep{Loscocco:07:Linux-kernel-in} contextual inspection system designed
+for appraising Linux.  LKIM takes advantage of a common, consistent Linux memory layout to sample memory locations associated with
+critical data structures.  These samples are assembled as an evidence tree
+and appraised with respect to policy.  Evidence describes the system and policy
+defines the performance envelop.  Copland and MAESTRO perform similarly on
+arbitrarily large systems.
 
-MAESTRO's widespread adoption is limited by difficulty understanding how to
-observe \emph{arbitrary} programs.  While the operating system is critical, user
-space and other privileged programs may also be compromised by an attack or
-misconfiguration.  Understanding ``how to look'' at such programs is frequently
-infeasible due to lack of source code and program complexity.  For MAESTRO and
-other attestation systems to succeed, the process of defining measurements,
-measurement targets, and attestation protocols must be automated.
+Difficulty understanding software limits adoption of MAESTRO specifically and
+attestation generally.  While LKIM appraisal of operating system is critical
+other software components may be compromised by an attack or
+misconfiguration.  Manually understanding those components for developing
+attestation systems is often infeasible due to lack of source code, program
+complexity, and emergent behaviors.  For MAESTRO and other attestation systems
+to succeed, the process of defining measurements, measurement targets, and
+attestation protocols must be automated.z
 
 Arizona State University has developed
 techniques to fuzz~\citep{trickel2022toss,salls2020exploring,peng2018t}, symbolically execute~\citep{stephens2016driller,shoshitaishvili2016sok}, and statically analyze~\citep{das2022hybrid,vadayath2022arbiter} complex user space programs and their components, including complex subsystems such as the dynamic allocator (``heap'')~\citep{eckert2018heaphopper} and cross-runtime interface bindings~\citep{dinh2021favocado}.
