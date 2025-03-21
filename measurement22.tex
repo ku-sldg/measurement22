@@ -107,11 +107,13 @@ an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where a protocol g
 \end{figure}
 
 \citet{Coker::Principles-of-R,Coker:08:Attestation:-Ev} define a remote
-attestation model where a target executes an \emph{attestation protocol} that
+attestation model where a target chooses and executes an \emph{attestation protocol} that
 gathers evidence and generates meta-evidence describing its execution. The protocol
 sequences executing of attestation services including measurement, signing, and
 making attestation requests of other systems.  These protocols are executed by
-one or many \emph{attestation manager(s)} associated with the relying party and target.
+one or more \emph{attestation manager(s)} associated with both the relying party
+and target.  Any attestation manager may choose not to execute a protocol if its
+privacy policy would be violated.
 
 Working with MITRE, JHUAPL, and NSA, the University of Kansas has developed the
 Copland~\citep{Ramsdell:2019aa} attestation protocol language and the MAESTRO
@@ -121,29 +123,28 @@ for synthesizing remote attestation systems. Copland is a formally specified
 language that sequences the execution of attestation services providers (ASPs)
 that gather measurement information, perform cryptographic operations to
 generate meta-evidence, and send requests to remote attestation managers. Using
-the Copland formal semantics, verified Coq definitions of attestation, and
+the Copland semantics, verified Coq definitions of attestation, and
 synthesis of Coq to CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a
-formally verified attestation manager that guarantees that all ASPs are
+formally verified attestation manager that guarantees that good ASPs are
 executed in the right order and at the right place.
- 
-If we have a performance envelope defining good execution, we can design Copland
-protocols and ASPs to gather and appraise evidence to determine if execution is
-in that envelop.  A concrete example of this is the
-LKIM~\citep{Loscocco:07:Linux-kernel-in} contextual inspection system designed
-for appraising Linux.  LKIM takes advantage of a common, consistent Linux memory layout to sample memory locations associated with
-critical data structures.  These samples are assembled as an evidence tree
-and appraised with respect to policy.  Evidence describes the system and policy
-defines the performance envelop.  Copland and MAESTRO perform similarly on
-arbitrarily large systems.
 
-Difficulty understanding software limits adoption of MAESTRO specifically and
-attestation generally.  While LKIM's operating system appraisal is critical,
-other software components may be compromised by an attack or
-misconfiguration.  Manually understanding those components in developing
-attestation systems is often infeasible due to lack of source code, program
-complexity, and emergent behaviors.  For MAESTRO and other attestation systems
-to succeed, the process of defining meaningful measurements, measurement
-targets, and attestation protocols must be automated.
+MAESTRO configures the verified attestation manager for specific attestation
+applications.  Given one or more Copland protocol, MAESTRO synthesizes manifests
+and configuration files for a collection of attestation managers. MAESTRO tools
+are formally verified and synthesize from Coq specifications to ensure
+correctness of generate attestation systems.  If we have a performance envelope
+defining good software execution, we can design Copland protocols and ASPs to
+gather and appraise evidence indicating  when execution is in that envelop.
+
+Difficulty finding the good performance envelop for arbitrary software systems
+limits attestation's uptake.  Attestation targets are arbitrary software systems
+whose behavior must be learned before writing a protocol.  Manually
+understanding these systems is often infeasible due to lack of source code,
+program complexity, and emergent behaviors.  Successful systems are bespoke
+designs for individual systems that have limited potential for reuse.  For
+Copland, MAESTRO and other attestation systems to succeed, finding good
+performance envelopes and measurements that produce evidence for them must be
+automated.
 
 Arizona State University has developed
 techniques to fuzz~\citep{trickel2022toss,salls2020exploring,peng2018t}, symbolically execute~\citep{stephens2016driller,shoshitaishvili2016sok}, and statically analyze~\citep{das2022hybrid,vadayath2022arbiter} complex user space programs and their components, including complex subsystems such as the dynamic allocator (``heap'')~\citep{eckert2018heaphopper} and cross-runtime interface bindings~\citep{dinh2021favocado}.
@@ -174,7 +175,24 @@ In other words, the measurement should be triggered as rarely as possible during
 This problem is an interesting mirror to false positive reduction during static analysis.
 By leveraging our system of \emph{Iterative False Positive Reduction} using a combination of Abstract Interpretation and Dynamic Symbolic Execution~\citep{vadayath2022arbiter}, we can narrow down to increasingly reduced instrumentation sites (by disproving the need for instrumentation at given points in the program), reducing runtime overhead by trading it for analysis-time cost.
 Even in cases where we cannot disprove the need for instrumentation, we may be able to ``back-propagate'' certain constraints that, if satisfied, disprove the need for further measurement at runtime.
-By carefully crafting such runtime instrumentation and correlating it to marked memory locations and events, we can essentially synthesize ``tripwires' that, when not tripped, cause very little overhead.
+By carefully crafting such runtime instrumentation and correlating it to marked
+memory locations and events, we can essentially synthesize ``tripwires' that,
+when not tripped, cause very little overhead.
+
+We proposed that using static analysis to discover performance envelopes will
+improve quality of attestation systems while decreasing their cost to deploy. We
+propose to: (i) extend the LKIM~\citep{Loscocco:07:Linux-kernel-in} approach of
+defining run-time measurements and policies for checking evidence to user-space
+applications; (ii) use static analysis to discover measurement
+targets and appraisal policies defining good behavior; (iii) extend the MAESTRO
+tool suite to include static analysis in defining attestation systems. Our
+experience with LKIM suggests that run-time state can be measured and appraised
+successfully.  Static analysis has proven successful in discovering substantial
+security-related structures in software
+systems.  Brining these two technologies together will result in dramatic
+improvements in the way we build attestation systems, their effectiveness, and
+our ability to understand the performance envelop of software systems.
+
 % 
 % 
 % ---- Bibliography ----
