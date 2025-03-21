@@ -50,12 +50,12 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-Runtime remove attestation is understanding program state under constrained
-disclosure. A relying party observes and appraises the behavior of a
-remote target by executing an attestation protocol. The protocol and the remote
-target constrain what can be observed by the relying party.  Designing
-attestation protocols requires identifying measurement points in program state
-that provide meaningful approximations  while respecting constrained disclosure.
+Runtime remote attestation is gathering verifiable evidence of program state under constrained
+disclosure with the intent of establishing trust. A relying party requests evidence from a
+remote target that responds by executing an attestation protocol to gather and
+sign evidence and meta-evidence.  Designing
+such attestation protocols requires identifying measurement points in program state
+that provide meaningful approximations while respecting constrained disclosure.
 Finding such observation points is complicated by state complexity, difficulty
 mapping execution state to behavior, and unavailability of source code.  Static
 and dynamic analysis techniques including fuzzing, abstract
@@ -71,15 +71,14 @@ measurements of user-space programs that soundly approximate runtime behavior.
 
 %%\section{Introduction}
 
-Establishing trust in a remote peer is a challenging problem that requires
-approximating program behavior. \citet{Martin:08:The-ten-page-in} defines trust
+\citet{Martin:08:The-ten-page-in} defines trust
 as exhibiting unambiguous identification, unhindered operation, and direct
-observation of good behavior or indirect observation by a trusted third party.
-One technique for establishing trust in a target system's execution is semantic
+observation of good behavior or indirect observation by a trusted third party. Establishing trust in a remote peer is a challenging problem requiring
+approximating program behavior by measuring its state and appraising resulting
+evidence. One technique for establishing trust in a target is semantic
 remote attestation~\citep{Haldar:04:Semantic-Remote,Coker::Principles-of-R}.
 Shown in Figure~\ref{fig:remote-attestation} a \emph{relying party} ($RP$) sends
-an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where attestation
-generates and returns evidence and meta-evidence ($e:(E,n)$) that can then be \emph{appraised} to determine trust.
+an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where a protocol gathers evidence and meta-evidence ($e:(E,n)$) that can be \emph{appraised} to determine trust.
 
 \begin{figure}[hbtp]
   \centering
@@ -109,8 +108,8 @@ generates and returns evidence and meta-evidence ($e:(E,n)$) that can then be \e
 
 \citet{Coker::Principles-of-R,Coker:08:Attestation:-Ev} define a remote
 attestation model where a target executes an \emph{attestation protocol} that
-gathers evidence and generates meta-evidence of its execution. The protocol
-sequences attestation service execution including measurement, signing, and
+gathers evidence and generates meta-evidence describing its execution. The protocol
+sequences executing of attestation services including measurement, signing, and
 making attestation requests of other systems.  These protocols are executed by
 one or many \emph{attestation manager(s)} associated with the relying party and target.
 
@@ -120,12 +119,12 @@ framework~\citep{petz2022innovations,
 Petz:2024:Verified-Configuration-and-Deployment-Paper}
 for synthesizing remote attestation systems. Copland is a formally specified
 language that sequences the execution of attestation services providers (ASPs)
-to gather measurement information, cryptographic operations to generate
-meta-evidence, and requests to remote attestation managers for evidence. Using
+that gather measurement information, perform cryptographic operations to
+generate meta-evidence, and send requests to remote attestation managers. Using
 the Copland formal semantics, verified Coq definitions of attestation, and
 synthesis of Coq to CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a
-formally verified, layered attestation capability guaranteeing that all ASPs are
-executed in the right order at the right place.
+formally verified attestation manager that guarantees that all ASPs are
+executed in the right order and at the right place.
  
 If we have a performance envelope defining good execution, we can design Copland
 protocols and ASPs to gather and appraise evidence to determine if execution is
@@ -138,13 +137,13 @@ defines the performance envelop.  Copland and MAESTRO perform similarly on
 arbitrarily large systems.
 
 Difficulty understanding software limits adoption of MAESTRO specifically and
-attestation generally.  While LKIM appraisal of operating system is critical,
+attestation generally.  While LKIM's operating system appraisal is critical,
 other software components may be compromised by an attack or
-misconfiguration.  Manually understanding those components for developing
+misconfiguration.  Manually understanding those components in developing
 attestation systems is often infeasible due to lack of source code, program
 complexity, and emergent behaviors.  For MAESTRO and other attestation systems
-to succeed, the process of defining measurements, measurement targets, and
-attestation protocols must be automated.z
+to succeed, the process of defining meaningful measurements, measurement
+targets, and attestation protocols must be automated.
 
 Arizona State University has developed
 techniques to fuzz~\citep{trickel2022toss,salls2020exploring,peng2018t}, symbolically execute~\citep{stephens2016driller,shoshitaishvili2016sok}, and statically analyze~\citep{das2022hybrid,vadayath2022arbiter} complex user space programs and their components, including complex subsystems such as the dynamic allocator (``heap'')~\citep{eckert2018heaphopper} and cross-runtime interface bindings~\citep{dinh2021favocado}.
