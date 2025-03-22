@@ -50,15 +50,15 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-Runtime remote attestation is gathering verifiable evidence of program state under constrained
-disclosure with the intent of establishing trust. A relying party requests evidence from a
-remote target that responds by executing an attestation protocol to gather and
-sign evidence and meta-evidence.  Designing
-such attestation protocols requires identifying measurement points in program state
-that provide meaningful approximations while respecting constrained disclosure.
-Finding such observation points is complicated by state complexity, difficulty
-mapping execution state to behavior, and unavailability of source code.  Static
-and dynamic analysis techniques including fuzzing, abstract
+Runtime remote attestation is gathering verifiable evidence of program state
+under constrained disclosure with the intent of establishing trust. A relying
+party requests evidence from a remote target that responds by executing an
+attestation protocol to gather and sign evidence and meta-evidence.  Designing
+such attestation protocols requires identifying measurement points in program
+state that provide meaningful approximations while respecting constrained
+disclosure.  Finding such observation points is complicated by state complexity,
+difficulty mapping execution state to behavior, and unavailability of source
+code.  Static and dynamic analysis techniques including fuzzing, abstract
 interpretation, and decompilation prove effective in approximating system state
 for testing and debugging.  We propose repurposing such techniques to discover
 measurements of user-space programs that soundly approximate runtime behavior.
@@ -71,14 +71,17 @@ measurements of user-space programs that soundly approximate runtime behavior.
 
 %%\section{Introduction}
 
-\citet{Martin:08:The-ten-page-in} defines trust
-as exhibiting unambiguous identification, unhindered operation, and direct
-observation of good behavior or indirect observation by a trusted third party. Establishing trust in a remote peer is a challenging problem requiring
-approximating program behavior by measuring its state and appraising resulting
-evidence. One technique for establishing trust in a target is semantic
-remote attestation~\citep{Haldar:04:Semantic-Remote,Coker::Principles-of-R}.
-Shown in Figure~\ref{fig:remote-attestation} a \emph{relying party} ($RP$) sends
-an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where a protocol gathers evidence and meta-evidence ($e:(E,n)$) that can be \emph{appraised} to determine trust.
+\citet{Martin:08:The-ten-page-in} defines trust as exhibiting unambiguous
+identification, unhindered operation, and direct observation of good behavior or
+indirect observation by a trusted third party. Establishing trust in a remote
+peer is a challenging problem requiring approximating program behavior by
+measuring its state and appraising resulting evidence. One technique for
+establishing trust in a target is semantic remote
+attestation~\citep{Haldar:04:Semantic-Remote,Coker::Principles-of-R}.  Shown in
+Figure~\ref{fig:remote-attestation} a \emph{relying party} ($RP$) sends an
+attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where a protocol
+gathers evidence and meta-evidence ($e:(E,n)$) that can be \emph{appraised} to
+determine trust.
 
 \begin{figure}[hbtp]
   \centering
@@ -107,26 +110,26 @@ an attestation request ($r:(R,n,a)$) to a \emph{target} ($T$) where a protocol g
 \end{figure}
 
 \citet{Coker::Principles-of-R,Coker:08:Attestation:-Ev} define a remote
-attestation model where a target chooses and executes an \emph{attestation protocol} that
-gathers evidence and generates meta-evidence describing its execution. The protocol
-sequences executing of attestation services including measurement, signing, and
-making attestation requests of other systems.  These protocols are executed by
-one or more \emph{attestation manager(s)} associated with both the relying party
-and target.  Any attestation manager may choose not to execute a protocol if its
-privacy policy would be violated.
+attestation model where a target chooses and executes an \emph{attestation
+protocol} that gathers evidence and generates meta-evidence describing its
+execution. The protocol sequences executing of attestation services including
+measurement, signing, and making attestation requests of other systems.  These
+protocols are executed by one or more \emph{attestation manager(s)} associated
+with both the relying party and target.  Any attestation manager may choose not
+to execute a protocol if its privacy policy would be violated.
 
 Working with MITRE, JHUAPL, and NSA, the University of Kansas has developed the
 Copland~\citep{Ramsdell:2019aa} attestation protocol language and the MAESTRO
 framework~\citep{petz2022innovations,
-Petz:2024:Verified-Configuration-and-Deployment-Paper}
-for synthesizing remote attestation systems. Copland is a formally specified
-language that sequences the execution of attestation services providers (ASPs)
-that gather measurement information, perform cryptographic operations to
-generate meta-evidence, and send requests to remote attestation managers. Using
-the Copland semantics, verified Coq definitions of attestation, and
-synthesis of Coq to CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a
-formally verified attestation manager that guarantees that good ASPs are
-executed in the right order and at the right place.
+Petz:2024:Verified-Configuration-and-Deployment-Paper} for synthesizing remote
+attestation systems. Copland is a formally specified language that sequences the
+execution of attestation services providers (ASPs) that gather measurement
+information, perform cryptographic operations to generate meta-evidence, and
+send requests to remote attestation managers. Using the Copland semantics,
+verified Coq definitions of attestation, and synthesis of Coq to
+CakeML~\citep{Kumar:2014:CVI:2535838.2535841} we have a formally verified
+attestation manager that guarantees that good ASPs are executed in the right
+order and at the right place.
 
 MAESTRO configures the verified attestation manager for specific attestation
 applications.  Given one or more Copland protocol, MAESTRO synthesizes manifests
@@ -150,48 +153,70 @@ Arizona State University has developed
 techniques to fuzz~\citep{trickel2022toss,salls2020exploring,peng2018t}, symbolically execute~\citep{stephens2016driller,shoshitaishvili2016sok}, and statically analyze~\citep{das2022hybrid,vadayath2022arbiter} complex user space programs and their components, including complex subsystems such as the dynamic allocator (``heap'')~\citep{eckert2018heaphopper} and cross-runtime interface bindings~\citep{dinh2021favocado}.
 These techniques prove useful for automatically discovering critical data structures useful for attack and defense.
 
-We propose a spectrum of techniques to automatically discover and
-implement high-quality measurement for use in downstream attestation.
-When source code is available (increasing the efficacy of static analysis by granting it accurate variable type information), we will use static analysis to identify memory regions whose measurements will be particularly informative.
-When source (and variable type information) is not available, we will leverage our decompilation techniques to find system variables whose values prove useful for appraisal, and leverage fuzzing to identify unusual states.
-Finally, we propose generating ASPs and instrumenting code during compilation (when source is available) or retrofitting it into the already-compiled binary using our binary modification techniques~\citep{wang2017ramblr} (when source is not available) to provide measurement access to critical structures.
+We propose a spectrum of techniques to automatically discover and implement
+high-quality measurement for use in downstream attestation.  When source code is
+available (increasing the efficacy of static analysis by granting it accurate
+variable type information), we will use static analysis to identify memory
+regions whose measurements will be particularly informative.  When source (and
+variable type information) is not available, we will leverage our decompilation
+techniques to find system variables whose values prove useful for appraisal, and
+leverage fuzzing to identify unusual states.  Finally, we propose generating
+ASPs and instrumenting code during compilation (when source is available) or
+retrofitting it into the already-compiled binary using our binary modification
+techniques~\citep{wang2017ramblr} (when source is not available) to provide
+measurement access to critical structures.
 
-We will use Fuzzing to generate and identify ``weird'' memory states.
-Once such states are identified, by analyzing the constraints that must be satisfied to trigger them, we will develop measurement and appraisal routines to detect these memory states.
-Because we understand how fuzzing is performed, and can leverage symbolic execution to delve deeper into the functionality of the program, we can understand what measurements tell us about observed memory.
+We will use Fuzzing to generate and identify ``weird'' memory states.  Once such
+states are identified, by analyzing the constraints that must be satisfied to
+trigger them, we will develop measurement and appraisal routines to detect these
+memory states.  Because we understand how fuzzing is performed, and can leverage
+symbolic execution to delve deeper into the functionality of the program, we can
+understand what measurements tell us about observed memory.
 
-Program decompilation identifies critical system variables for runtime measurement.
-Decompilation produces source with variables present.
-Once decompiled, we will perform source-level analysis to determine what variables are valuable for runtime measurement.
-Using type information, we can bound memory values and identify good and bad variable values.
-Using this information, we can automatically synthesize measurement and appraisal routines for variable memory locations.
+Program decompilation identifies critical system variables for runtime
+measurement.  Decompilation produces source with variables present.  Once
+decompiled, we will perform source-level analysis to determine what variables
+are valuable for runtime measurement.  Using type information, we can bound
+memory values and identify good and bad variable values.  Using this
+information, we can automatically synthesize measurement and appraisal routines
+for variable memory locations.
 
-We plan to use static analysis and compilation techniques to automatically generate measurement and appraisal routines from OS and user-space software.
-For example, we can utilize our dynamic allocator analysis results~\citep{eckert2018heaphopper} to synthesize measurement routines for allocator implementation to detect integrity violations due to other bugs in the program.
-We can carry out similar intervention at the boundary between different program components by leveraging interface specifications combined with advanced analysis~\citep{dinh2021favocado}.
-
-We must take care to limit the performance impact of measurement instrumentation.
-In other words, the measurement should be triggered as rarely as possible during runtime while still providing detection guarantees.
-This problem is an interesting mirror to false positive reduction during static analysis.
-By leveraging our system of \emph{Iterative False Positive Reduction} using a combination of Abstract Interpretation and Dynamic Symbolic Execution~\citep{vadayath2022arbiter}, we can narrow down to increasingly reduced instrumentation sites (by disproving the need for instrumentation at given points in the program), reducing runtime overhead by trading it for analysis-time cost.
-Even in cases where we cannot disprove the need for instrumentation, we may be able to ``back-propagate'' certain constraints that, if satisfied, disprove the need for further measurement at runtime.
-By carefully crafting such runtime instrumentation and correlating it to marked
-memory locations and events, we can essentially synthesize ``tripwires' that,
-when not tripped, cause very little overhead.
+We plan to use static analysis and compilation techniques to automatically
+generate measurement and appraisal routines from OS and user-space software.
+For example, we can utilize our dynamic allocator analysis
+results~\citep{eckert2018heaphopper} to synthesize measurement routines for
+allocator implementation to detect integrity violations due to other bugs in the
+program.  We can carry out similar intervention at the boundary between
+different program components by leveraging interface specifications combined
+with advanced analysis~\citep{dinh2021favocado}.  We must take care to limit the
+performance impact of measurement instrumentation.  This problem is an
+interesting mirror to false positive reduction during static analysis.  In other
+words, the measurement should be triggered as rarely as possible during runtime
+while still providing detection guarantees.  By leveraging our system of
+\emph{Iterative False Positive Reduction} using a combination of Abstract
+Interpretation and Dynamic Symbolic Execution~\citep{vadayath2022arbiter}, we
+can narrow down to increasingly reduced instrumentation sites (by disproving the
+need for instrumentation at given points in the program), reducing runtime
+overhead by trading it for analysis-time cost.  Even in cases where we cannot
+disprove the need for instrumentation, we may be able to ``back-propagate''
+certain constraints that, if satisfied, disprove the need for further
+measurement at runtime.  By carefully crafting such runtime instrumentation and
+correlating it to marked memory locations and events, we can essentially
+synthesize ``tripwires' that, when not tripped, cause very little overhead.
 
 We proposed that using static analysis to discover performance envelopes will
 improve quality of attestation systems while decreasing their cost to deploy. We
 propose to: (i) extend the LKIM~\citep{Loscocco:07:Linux-kernel-in} approach of
 defining run-time measurements and policies for checking evidence to user-space
-applications; (ii) use static analysis to discover measurement
-targets and appraisal policies defining good behavior; (iii) extend the MAESTRO
-tool suite to include static analysis in defining attestation systems. Our
-experience with LKIM suggests that run-time state can be measured and appraised
-successfully.  Static analysis has proven successful in discovering substantial
-security-related structures in software
-systems.  Brining these two technologies together will result in dramatic
-improvements in the way we build attestation systems, their effectiveness, and
-our ability to understand the performance envelop of software systems.
+applications; (ii) use static analysis to discover measurement targets and
+appraisal policies defining good behavior; (iii) extend the MAESTRO tool suite
+to include static analysis in defining attestation systems. Our experience with
+LKIM suggests that run-time state can be measured and appraised successfully.
+Static analysis has proven successful in discovering substantial
+security-related structures in software systems.  Brining these two technologies
+together will result in dramatic improvements in the way we build attestation
+systems, their effectiveness, and our ability to understand the performance
+envelop of software systems.
 
 % 
 % 
